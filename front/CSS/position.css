@@ -1,12 +1,12 @@
-#upper, #lower{
+#upper, #lower, .left, .right{
     display: flex;
     justify-content:space-around;
 }
 
-#left, #right{
-    flex-grow: 1;
-}
-
 h1,h2{
     text-align: center;
+}
+
+img{
+    display: inline; 
 }
