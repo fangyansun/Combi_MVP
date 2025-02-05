@@ -22,17 +22,18 @@ websocket_namespace = {
                 const key_value = event.data.split("=")
                 const key = key_value[0]
                 const value = key_value[1]
+                console.log("key :",key, "value ",value);
                 switch (key){
-                    case 1:
+                    case '1':
                         main_namespace.set_Temperature_1(value)
                         break
-                    case 2:
+                    case '2':
                         main_namespace.set_Temperature_2(value)
                         break
-                    case 3:
+                    case '3':
                         main_namespace.set_Temperature_3(value)
                         break
-                    case 4:
+                    case '4':
                         main_namespace.set_Temperature_4(value)
                         break
                 }
