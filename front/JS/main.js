@@ -25,7 +25,7 @@ let main_namespace = {
 
 }
 
-console.log("hello")
+console.log("hello from main")
 main_namespace.set_Temperature_1(50)
 
 
