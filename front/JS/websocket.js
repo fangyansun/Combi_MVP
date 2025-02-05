@@ -5,8 +5,10 @@ websocket_namespace = {
 
     init(){
 
+        console.log("websocket init program")
+
         // Create WebSocket connection.
-        const socket = new WebSocket("ws://localhost:5678");
+        const socket = new WebSocket("ws://localhost:8765");
 
         // Connection opened
         socket.addEventListener("open", function (event) {
@@ -22,5 +24,8 @@ websocket_namespace = {
 
 
 }
+
+
+websocket_namespace.init()
 
 console.log("hello from websocket")
