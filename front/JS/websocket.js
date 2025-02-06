@@ -44,8 +44,3 @@ websocket_namespace = {
 
 
 }
-
-
-websocket_namespace.init()
-
-console.log("hello from websocket")
