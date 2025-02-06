@@ -7,13 +7,10 @@ websocket_namespace = {
 
         console.log("websocket init program")
 
-        // Create WebSocket connection.
         const socket = new WebSocket("ws://localhost:8765");
 
-        // Connection opened
-        socket.addEventListener("open", function (event) {
-            socket.send("Hello Server!");
-        });
+        socket.onopen = ()=>console.log("websocket connexion open")
+        socket.onclose = ()=>console.log("websocket connexion close")
 
         // Listen for messages
         socket.addEventListener("message", function (event) {
@@ -39,9 +36,9 @@ websocket_namespace = {
                 }
             } catch (error) {
                 console.log("error during websocket data analysis",error)                
-            }          
+            }
+        })
             
-        });
 
     }
 
