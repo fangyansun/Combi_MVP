@@ -27,14 +27,8 @@ async def echo_Once(websocket):
     for message in ["1=50","2=69","4=1112"]:
         print("send one message : ",message)
         await websocket.send(message)
-        sleep(1)
+        await asyncio.sleep(1)
 
-async def echo_All_Messages(websocket):
-    print("echo_all_messages")
-    async for message in websocket:
-        print("send one message : ",message)
-        await websocket.send(message)
-    
 async def main():
     print("main")
     async with serve(echo_Once, "localhost", 8765) as server:
