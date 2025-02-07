@@ -16,7 +16,6 @@ by clicking on the html file
 - front
     - CSS
     - JS
-    - LOG
     - IMAGES
 
 
