@@ -19,6 +19,7 @@ Tutorial :
 import asyncio
 from websockets.asyncio.server import serve
 import serial
+import threading
 import time
 
 # Global variables and constants
@@ -48,18 +49,23 @@ async def echo_Once(websocket):
         await websocket.send(message)
         await asyncio.sleep(1)
 
-async def main():
-    print("main")
+async def start_websocket():
     async with serve(echo_Once, "localhost", 8765) as server:
-        print("start serve forever")
+        print("start websocket server")
         await server.serve_forever()
+
+def websocket():
+    asyncio.run(start_websocket())
 
 if __name__ == "__main__":
     print("start the program")
-    # asyncio.run(main())
     success, arduino_com = serial_Communication_Init()
     if success:
-        try:
+        # launch the websocket server in another thread
+        thread = threading.Thread(target=websocket)
+        thread.start()
+        # in the same time, start listening to arduino data
+        try:            
             while True:
                 data=arduino_com.readline().decode('utf-8').strip()
                 if data:
@@ -67,24 +73,6 @@ if __name__ == "__main__":
                 else:
                     print("we received empty data")
         except Exception as error:
-            print("Erreur lors de la lecture des données venant d'Arduino", error)
-                
+            print("Erreur lors de la lecture des données venant d'Arduino", error)        
 
-    #     print('Arduino connexion success')
-    #     print(arduino_com)
-    #     count_down = 50
-    #     while count_down > 0:
-    #         count_down -= 1
-    #         print(f'{count_down=}')
-    #         message_from_arduino = arduino_com.readline() # .decode('utf8').strip()
-    #         print(f'{message_from_arduino=}')
-    #         message_from_arduino.decode('utf8').strip()
-    #         print(f'{message_from_arduino=}')
-    #         if message_from_arduino:
-    #             print("message received from Arduino : ", message_from_arduino)
-    #         else:
-    #             print("nothing received from Arduino")
-    #         time.sleep(0.5)
-    #     arduino_com.close()
-    # else:
-    #     print('Arduino connexion failure')
+    

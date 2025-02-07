@@ -8,8 +8,7 @@ void setup() {
 
 void loop() {  
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-    Serial.println("temp_2=90"); // send some info to the computer through USB
-  
+    
     int sensorValue = analogRead(A0); // Lire un capteur sur A0 (exemple)
     float data = sensorValue * (5.0 / 1023.0); // Convertir en tension
 
