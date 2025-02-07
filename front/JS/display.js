@@ -8,6 +8,8 @@ let display_namespace = {
     temperature_4 : null,
 
     init(){
+        console.log("hello from display_namespace")
+        
         this.temperature_1 = document.getElementById("temperature_1")
         this.temperature_2 = document.getElementById("temperature_2")
         this.temperature_3 = document.getElementById("temperature_3")

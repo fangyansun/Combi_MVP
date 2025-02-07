@@ -22,16 +22,16 @@ websocket_namespace = {
                 console.log("key :",key, "value ",value);
                 switch (key){
                     case '1':
-                        main_namespace.set_Temperature_1(value)
+                        display_namespace.set_Temperature_1(value)
                         break
                     case '2':
-                        main_namespace.set_Temperature_2(value)
+                        display_namespace.set_Temperature_2(value)
                         break
                     case '3':
-                        main_namespace.set_Temperature_3(value)
+                        display_namespace.set_Temperature_3(value)
                         break
                     case '4':
-                        main_namespace.set_Temperature_4(value)
+                        display_namespace.set_Temperature_4(value)
                         break
                 }
             } catch (error) {
