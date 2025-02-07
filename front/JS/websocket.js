@@ -37,8 +37,7 @@ websocket_namespace = {
             } catch (error) {
                 console.log("error during websocket data analysis",error)                
             }
-        })
-            
+        })         
 
     }
 

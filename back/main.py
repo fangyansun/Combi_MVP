@@ -19,7 +19,6 @@ Tutorial :
 import asyncio
 from websockets.asyncio.server import serve
 import serial
-import threading
 import time
 
 # Global variables and constants
@@ -40,39 +39,33 @@ def serial_Communication_Init():
 
     except Exception as error:
         print("Erreur lors de l'initialisation de la communication avec Arduino : ", error)
-        return False, _
+        return False, None
 
-async def echo_Once(websocket):
-    print("echo_once")
-    for message in ["1=50","2=69","4=1112"]:
-        print("send one message : ",message)
-        await websocket.send(message)
-        await asyncio.sleep(1)
-
-async def start_websocket():
-    async with serve(echo_Once, "localhost", 8765) as server:
-        print("start websocket server")
-        await server.serve_forever()
-
-def websocket():
-    asyncio.run(start_websocket())
-
-if __name__ == "__main__":
-    print("start the program")
+async def websocket_Handler(websocket):
+    print("websocket_Handler")
     success, arduino_com = serial_Communication_Init()
     if success:
-        # launch the websocket server in another thread
-        thread = threading.Thread(target=websocket)
-        thread.start()
-        # in the same time, start listening to arduino data
-        try:            
+        try:
             while True:
                 data=arduino_com.readline().decode('utf-8').strip()
                 if data:
                     print("recu : ",data)
+                    print("we will send it to the front end")
+                    await websocket.send(data)
+                    await asyncio.sleep(0.1) # the program does not work without this line
                 else:
                     print("we received empty data")
         except Exception as error:
             print("Erreur lors de la lecture des données venant d'Arduino", error)        
+
+async def start_Websocket():
+    # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
+    async with serve(websocket_Handler, "localhost", 8765):
+        print("start websocket server")
+        await asyncio.get_running_loop().create_future()
+
+if __name__ == "__main__":
+    print("start the program")
+    asyncio.run(start_Websocket())
 
     
