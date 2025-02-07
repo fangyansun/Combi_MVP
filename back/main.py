@@ -35,14 +35,11 @@ def serial_Communication_Init():
         # wait a few seconds, otherwise, the first commands are not taken into account
         time.sleep(INIT_DELAY)
         print("connexion établie !")
-        return True
+        return True, arduino_com
 
     except Exception as error:
         print("Erreur lors de l'initialisation de la communication avec Arduino : ", error)
-        return False
-    
-    finally:
-        arduino_com.close()
+        return False, _
 
 async def echo_Once(websocket):
     print("echo_once")
@@ -60,4 +57,34 @@ async def main():
 if __name__ == "__main__":
     print("start the program")
     # asyncio.run(main())
-    print("let's start the communication with Arduino ! Success ? ",serial_Communication_Init())    
+    success, arduino_com = serial_Communication_Init()
+    if success:
+        try:
+            while True:
+                data=arduino_com.readline().decode('utf-8').strip()
+                if data:
+                    print("recu : ",data)
+                else:
+                    print("we received empty data")
+        except Exception as error:
+            print("Erreur lors de la lecture des données venant d'Arduino", error)
+                
+
+    #     print('Arduino connexion success')
+    #     print(arduino_com)
+    #     count_down = 50
+    #     while count_down > 0:
+    #         count_down -= 1
+    #         print(f'{count_down=}')
+    #         message_from_arduino = arduino_com.readline() # .decode('utf8').strip()
+    #         print(f'{message_from_arduino=}')
+    #         message_from_arduino.decode('utf8').strip()
+    #         print(f'{message_from_arduino=}')
+    #         if message_from_arduino:
+    #             print("message received from Arduino : ", message_from_arduino)
+    #         else:
+    #             print("nothing received from Arduino")
+    #         time.sleep(0.5)
+    #     arduino_com.close()
+    # else:
+    #     print('Arduino connexion failure')
