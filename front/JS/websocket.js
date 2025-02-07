@@ -19,20 +19,24 @@ websocket_namespace = {
                 const key_value = event.data.split("=")
                 const key = key_value[0]
                 const value = key_value[1]
-                console.log("key :",key, "value ",value);
                 switch (key){
-                    case '1':
+                    case 'Temp_car':
                         display_namespace.set_Temperature_1(value)
                         break
-                    case '2':
+                    case 'Temp_motor':
                         display_namespace.set_Temperature_2(value)
                         break
-                    case '3':
+                    case 'Temp_water':
                         display_namespace.set_Temperature_3(value)
                         break
-                    case '4':
+                    case 'Temp_ext':
                         display_namespace.set_Temperature_4(value)
                         break
+                    case 'Temp_ext':
+                        display_namespace.set_Temperature_4(value)
+                        break
+                    default:
+                        console.log("we received a message with an unknown key : ", key)
                 }
             } catch (error) {
                 console.log("error during websocket data analysis",error)                
