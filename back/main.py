@@ -3,8 +3,6 @@
 """
 Created on: 06/02/2025
 
-@author: TJ from Philanoe Consulting
-
 Objective: create a simple websocket server aming to send information to tableau_de_bord.html
 
 Launch me with : python main.py
@@ -20,7 +18,31 @@ Tutorial :
 
 import asyncio
 from websockets.asyncio.server import serve
-from time import sleep
+import serial
+import time
+
+# Global variables and constants
+
+BAUDRATE = 9600
+TIMEOUT = 5
+USB_PORT = 'COM6'# "/dev/ttyACMO"
+INIT_DELAY = 2
+
+def serial_Communication_Init():
+    print("Initialisation en cours")
+    try:
+        arduino_com = serial.Serial(USB_PORT,BAUDRATE,timeout=TIMEOUT)
+        # wait a few seconds, otherwise, the first commands are not taken into account
+        time.sleep(INIT_DELAY)
+        print("connexion établie !")
+        return True
+
+    except Exception as error:
+        print("Erreur lors de l'initialisation de la communication avec Arduino : ", error)
+        return False
+    
+    finally:
+        arduino_com.close()
 
 async def echo_Once(websocket):
     print("echo_once")
@@ -37,4 +59,5 @@ async def main():
 
 if __name__ == "__main__":
     print("start the program")
-    asyncio.run(main())
+    # asyncio.run(main())
+    print("let's start the communication with Arduino ! Success ? ",serial_Communication_Init())    
