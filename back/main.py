@@ -29,6 +29,7 @@ USB_PORT = 'COM6'# "/dev/ttyACMO"
 INIT_DELAY = 2
 DATA_RECORDING_PERIOD = 3 # in seconds
 LOG_PATH = "log/log.csv"
+NUMBER_OF_LINES_BEFORE_SENDING_THE_LOG = 3
 
 global_data_dict = {"Temp_car":0,"Temp_motor":0,"Temp_water":0,"Temp_ext":0,"Speed":0,"GPS_1":0,"GPS_2":0}
 
@@ -49,33 +50,47 @@ async def websocket_Handler(websocket):
     print("websocket_Handler")
     success, arduino_com = serial_Communication_Init()
     last_time = 0
+    number_of_lines_before_sending_the_log = NUMBER_OF_LINES_BEFORE_SENDING_THE_LOG
     if success:
-            while True:
-                try:
-                    data=arduino_com.readline().decode('utf-8').strip()
-                    if data:
-                        # step 1 : record the data in a global_data_dict
-                        key, value = data.split("=")
-                        try:
-                            global_data_dict[key] = value
+        while True:
+            try:
+                data=arduino_com.readline().decode('utf-8').strip()
+                if data:
+                    # step 1 : record the data in a global_data_dict
+                    key, value = data.split("=")
+                    try:
+                        global_data_dict[key] = value
 
-                            # step 2 : send the data to the frond end through websocket
-                            await websocket.send(data)
-                            await asyncio.sleep(0.1) # the program does not work without this line                    
+                        # step 2 : send the data to the frond end through websocket
+                        await websocket.send(data)
+                        await asyncio.sleep(0.1) # the program does not work without this line                    
 
-                            # step 3 : if we waited long enough, we make one record on the local database
-                            current_time = time.perf_counter()
-                            if (current_time - last_time > DATA_RECORDING_PERIOD):
-                                record_Current_Data_Into_Local_Log_File()
-                                last_time = current_time
+                        # step 3 : if we waited long enough, we make one record on the local database
+                        current_time = time.perf_counter()
+                        if (current_time - last_time > DATA_RECORDING_PERIOD):
+                            record_Current_Data_Into_Local_Log_File()
+                            last_time = current_time
+                            number_of_lines_before_sending_the_log -= 1
 
-                        except Exception as error:
-                            print(f'Data split error with this data : {data} and that error : {error}')
-                        
-                    else:
-                        print("we received empty data")
-                except Exception as error:
-                    print("Erreur lors de la lecture des données venant d'Arduino", error)        
+                        # step 4 : if we waited long enough, we send the record to the remote server
+                        if number_of_lines_before_sending_the_log == 0:
+                            sending_Log_To_Remote_Server()
+                            reset_Log()
+                            number_of_lines_before_sending_the_log = NUMBER_OF_LINES_BEFORE_SENDING_THE_LOG
+
+                    except Exception as error:
+                        print(f'Data split error with this data : {data} and that error : {error}')
+                    
+                else:
+                    print("we received empty data")
+            except Exception as error:
+                print("Erreur lors de la lecture des données venant d'Arduino", error)        
+
+def sending_Log_To_Remote_Server():
+    print("I send the log to the remote server")
+
+def reset_Log():
+    print("I reset the log")
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
