@@ -32,8 +32,14 @@ websocket_namespace = {
                     case 'Temp_ext':
                         display_namespace.set_Temperature_4(value)
                         break
-                    case 'Temp_ext':
-                        display_namespace.set_Temperature_4(value)
+                    case 'Speed':
+                        // TODO
+                        break
+                    case 'GPS_1':
+                        // TODO
+                        break
+                case 'GPS_2':
+                        // TODO
                         break
                     default:
                         console.log("we received a message with an unknown key : ", key)

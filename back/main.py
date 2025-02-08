@@ -27,6 +27,9 @@ BAUDRATE = 9600
 TIMEOUT = 5
 USB_PORT = 'COM6'# "/dev/ttyACMO"
 INIT_DELAY = 2
+DATA_RECORDING_PERIOD = 2 # in seconds
+
+global_data_dict = {"Temp_car":0,"Temp_motor":0,"Temp_water":0,"Temp_ext":0,"Speed":0,"GPS_1":0,"GPS_2":0}
 
 def serial_Communication_Init():
     print("Initialisation en cours")
@@ -44,19 +47,34 @@ def serial_Communication_Init():
 async def websocket_Handler(websocket):
     print("websocket_Handler")
     success, arduino_com = serial_Communication_Init()
+    last_time = 0
     if success:
-        try:
             while True:
-                data=arduino_com.readline().decode('utf-8').strip()
-                if data:
-                    print("recu : ",data)
-                    print("we will send it to the front end")
-                    await websocket.send(data)
-                    await asyncio.sleep(0.1) # the program does not work without this line
-                else:
-                    print("we received empty data")
-        except Exception as error:
-            print("Erreur lors de la lecture des données venant d'Arduino", error)        
+                try:
+                    data=arduino_com.readline().decode('utf-8').strip()
+                    if data:
+                        # step 1 : record the data in a global_data_dict
+                        key, value = data.split("=")
+                        try:
+                            global_data_dict[key] = value
+
+                            # step 2 : send the data to the frond end through websocket
+                            await websocket.send(data)
+                            await asyncio.sleep(0.1) # the program does not work without this line                    
+
+                            # step 3 : if we waited long enough, we make one record on the local database
+                            current_time = time.perf_counter()
+                            if (current_time - last_time > DATA_RECORDING_PERIOD):
+                                print("we record the data")
+                                last_time = current_time
+
+                        except Exception as error:
+                            print(f'Data split error with this data : {data} and that error : {error}')
+                        
+                    else:
+                        print("we received empty data")
+                except Exception as error:
+                    print("Erreur lors de la lecture des données venant d'Arduino", error)        
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
@@ -64,8 +82,14 @@ async def start_Websocket():
         print("start websocket server")
         await asyncio.get_running_loop().create_future()
 
+def record_current_data_into_local_log_file():
+    print(global_data_dict)        
+    time.sleep(DATA_RECORDING_PERIOD)
+
 if __name__ == "__main__":
     print("start the program")
     asyncio.run(start_Websocket())
+    
+
 
     
