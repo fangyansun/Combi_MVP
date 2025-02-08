@@ -27,7 +27,8 @@ BAUDRATE = 9600
 TIMEOUT = 5
 USB_PORT = 'COM6'# "/dev/ttyACMO"
 INIT_DELAY = 2
-DATA_RECORDING_PERIOD = 2 # in seconds
+DATA_RECORDING_PERIOD = 3 # in seconds
+LOG_PATH = "log/log.csv"
 
 global_data_dict = {"Temp_car":0,"Temp_motor":0,"Temp_water":0,"Temp_ext":0,"Speed":0,"GPS_1":0,"GPS_2":0}
 
@@ -65,7 +66,7 @@ async def websocket_Handler(websocket):
                             # step 3 : if we waited long enough, we make one record on the local database
                             current_time = time.perf_counter()
                             if (current_time - last_time > DATA_RECORDING_PERIOD):
-                                print("we record the data")
+                                record_Current_Data_Into_Local_Log_File()
                                 last_time = current_time
 
                         except Exception as error:
@@ -82,9 +83,15 @@ async def start_Websocket():
         print("start websocket server")
         await asyncio.get_running_loop().create_future()
 
-def record_current_data_into_local_log_file():
-    print(global_data_dict)        
-    time.sleep(DATA_RECORDING_PERIOD)
+def record_Current_Data_Into_Local_Log_File():
+    print(global_data_dict)
+    try:
+        file = open(LOG_PATH, "a")
+        file.write(str(global_data_dict))
+        file.write("\n")
+        file.close
+    except Exception as error:
+        print("Erreur durant l'écriture du log dans un fichier local", error)
 
 if __name__ == "__main__":
     print("start the program")
