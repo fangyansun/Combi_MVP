@@ -2,6 +2,7 @@
 
 let display_namespace = {
 
+    speed : null,
     temperature_1 : null,
     temperature_2 : null,
     temperature_3 : null,
@@ -9,14 +10,15 @@ let display_namespace = {
 
     init(){
         console.log("hello from display_namespace")
-        
+
+        this.speed         = document.getElementById("speed")
         this.temperature_1 = document.getElementById("temperature_1")
         this.temperature_2 = document.getElementById("temperature_2")
         this.temperature_3 = document.getElementById("temperature_3")
         this.temperature_4 = document.getElementById("temperature_4")
 
         // check if they exist
-        const display_list = [this.temperature_1, this.temperature_2, this.temperature_3, this.temperature_4]
+        const display_list = [this.speed, this.temperature_1, this.temperature_2, this.temperature_3, this.temperature_4]
         let counter = 0
         display_list.forEach(element => {
             if (element == null){
@@ -25,7 +27,11 @@ let display_namespace = {
             counter ++
         })
 
-    },    
+    },
+
+    set_Speed(speed){
+        this.speed.innerHTML = speed
+    },
 
     set_Temperature_1(temperature){
         this.temperature_1.innerHTML = temperature

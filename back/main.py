@@ -22,23 +22,20 @@ import serial
 import time
 
 # Global variables and constants
-
+USB_PORT = "COM6"
 BAUDRATE = 9600
-TIMEOUT = 5
-USB_PORT = 'COM6'# "/dev/ttyACMO"
-INIT_DELAY = 2
-DATA_RECORDING_PERIOD = 3 # in seconds
-LOG_PATH = "log/log.csv"
-NUMBER_OF_LINES_BEFORE_SENDING_THE_LOG = 3
+ARDUINO_CONNEXION_TIMEOUT = 5
+INIT_DELAY = 5
+DATA_RECORDING_PERIOD = 10 # in seconds
+LOG_PATH = "log/log.csv" # in a future version, we might have a different log name for each period of time
 
-global_data_dict = {"Temp_car":0,"Temp_motor":0,"Temp_water":0,"Temp_ext":0,"Speed":0,"GPS_1":0,"GPS_2":0}
+global_data_dict = {}
 last_time = 0
-number_of_lines_before_sending_the_log = NUMBER_OF_LINES_BEFORE_SENDING_THE_LOG
 
 def serial_Communication_Init():
-    print("Initialisation en cours")
+    print("Initialisation en cours, nous attendons la connexion avec Arduino")
     try:
-        arduino_com = serial.Serial(USB_PORT,BAUDRATE,timeout=TIMEOUT)
+        arduino_com = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
         # wait a few seconds, otherwise, the first commands are not taken into account
         time.sleep(INIT_DELAY)
         print("connexion établie avec Arduino !")
@@ -49,9 +46,8 @@ def serial_Communication_Init():
         return False, None
 
 async def websocket_Handler(websocket):
-    print("websocket_Handler")
+    print("websocket_Handler, nous attendons les messages provenant d'Arduino")
     # we use global variables because this function could be reset by the client (F5)
-    global number_of_lines_before_sending_the_log
     global last_time
     while True:
         try:
@@ -72,13 +68,6 @@ async def websocket_Handler(websocket):
                             if (current_time - last_time > DATA_RECORDING_PERIOD):
                                 record_Current_Data_Into_Local_Log_File()
                                 last_time = current_time
-                                number_of_lines_before_sending_the_log -= 1
-
-                            # step 4 : if we waited long enough, we send the record to the remote server
-                            if number_of_lines_before_sending_the_log == 0:
-                                sending_Log_To_Remote_Server()
-                                reset_Log()
-                                number_of_lines_before_sending_the_log = NUMBER_OF_LINES_BEFORE_SENDING_THE_LOG
 
                         except Exception as error:
                             print(f'asyncio.sleep error : {error}')
@@ -93,16 +82,10 @@ async def websocket_Handler(websocket):
         except Exception as error:
             print("Erreur lors de la lecture des données venant d'Arduino avec arduino_com.readline", error)
 
-def sending_Log_To_Remote_Server():
-    print("I send the log to the remote server")
-
-def reset_Log():
-    print("I reset the log")
-
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
     async with serve(websocket_Handler, "localhost", 8765):
-        print("start websocket server")
+        print("start websocket server, nous attendons la connexion du front")
         await asyncio.get_running_loop().create_future()
 
 def record_Current_Data_Into_Local_Log_File():
@@ -116,7 +99,7 @@ def record_Current_Data_Into_Local_Log_File():
         print("Erreur durant l'écriture du log dans un fichier local", error)
 
 if __name__ == "__main__":
-    print("start the program")
+    print("Début du programme")
     success, arduino_com = serial_Communication_Init()
     if success:
         asyncio.run(start_Websocket())
