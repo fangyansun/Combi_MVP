@@ -1,3 +1,26 @@
-.left, .right{
+body{
+    margin-left:25%;
+    margin-right:25%;
+}
+
+h1{
+    font-size: 7em;
+}
+
+.dasbhoard_indicator{
     flex:1;
+}
+
+.temperature{
+    margin-right: 2em;
+}
+
+.dasbhoard_indicator{
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 4em;
+    padding-right: 4em;
+    border: solid black 0.1em;
+    border-radius: 1em;
+    width:20em;
 }

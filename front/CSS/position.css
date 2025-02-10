@@ -1,4 +1,9 @@
-#upper, #lower, .left, .right{
+#upper, #lower{
+    display: flex;
+    justify-content:space-around;
+}
+
+.dasbhoard_indicator{
     display: flex;
     justify-content:space-around;
 }
@@ -7,11 +12,11 @@ h1,h2{
     text-align: center;
 }
 
-img{
-    display: inline; 
+.temperature{
+    margin: auto;    
 }
 
-.temperature{
-    margin: auto;
-    margin-right: 3em;
+/* put the logo and temperature value in the middle of their container */
+.logo, .temperature{
+    flex:1;
 }
