@@ -90,9 +90,12 @@ async def start_Websocket():
 
 def record_Current_Data_Into_Local_Log_File():
     print(global_data_dict)
+    csv_string = ""
+    for value in global_data_dict.values():
+        csv_string = csv_string + value + ";"
     try:
         file = open(LOG_PATH, "a")
-        file.write(str(global_data_dict))
+        file.write(csv_string)
         file.write("\n")
         file.close
     except Exception as error:

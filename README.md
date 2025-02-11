@@ -78,13 +78,8 @@ Then, we can install the log sending script so that it is executed each 20 minut
 crontab -e
 */20 * * * * /path_to_script/send_log.sh
 
-
-
-
-
-
-
-
-
-
-
+# Create a launcher button
+- Right click on the desktop
+- Select "create a launcher"
+- Choose the option "Run on a Terminal"
+- Select 'launch_back_and_front.sh'
