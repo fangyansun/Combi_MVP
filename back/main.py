@@ -12,8 +12,6 @@ Tutorial :
 - https://www.bilibili.com/video/BV1Rb4y1X7vw/?vd_source=f33f8677b3006d3f2ee60860f392b7ff
 """
 
-#!/usr/bin/env python
-
 """Echo server using the asyncio API."""
 
 import asyncio
@@ -26,6 +24,7 @@ USB_PORT = "COM6"
 BAUDRATE = 9600
 ARDUINO_CONNEXION_TIMEOUT = 5
 INIT_DELAY = 5
+RETRY_DELAY = 20
 DATA_RECORDING_PERIOD = 10 # in seconds
 LOG_PATH = "log/log.csv" # in a future version, we might have a different log name for each period of time
 
@@ -33,17 +32,23 @@ global_data_dict = {}
 last_time = 0
 
 def serial_Communication_Init():
-    print("Initialisation en cours, nous attendons la connexion avec Arduino")
-    try:
-        arduino_com = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
-        # wait a few seconds, otherwise, the first commands are not taken into account
-        time.sleep(INIT_DELAY)
-        print("connexion établie avec Arduino !")
-        return True, arduino_com
+    retry = True
+    while retry:
+        try:
+            print("Initialisation en cours, nous attendons la connexion avec Arduino")
+            arduino_com = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
+            # wait a few seconds, otherwise, the first commands are not taken into account
+            time.sleep(INIT_DELAY)
+            print("connexion établie avec Arduino !")
+            retry = False
+                
+        except Exception as error:
+            print("Erreur lors de l'initialisation de la communication avec Arduino : ", error)
+            print(f'Nous allons réessayer dans : {RETRY_DELAY} s')
+            time.sleep(RETRY_DELAY)
+    
+    return arduino_com
 
-    except Exception as error:
-        print("Erreur lors de l'initialisation de la communication avec Arduino : ", error)
-        return False, None
 
 async def websocket_Handler(websocket):
     print("websocket_Handler, nous attendons les messages provenant d'Arduino")
@@ -103,9 +108,8 @@ def record_Current_Data_Into_Local_Log_File():
 
 if __name__ == "__main__":
     print("Début du programme")
-    success, arduino_com = serial_Communication_Init()
-    if success:
-        asyncio.run(start_Websocket())
+    arduino_com = serial_Communication_Init()
+    asyncio.run(start_Websocket())
     
 
 
