@@ -16,11 +16,6 @@ h1,h2{
     margin: auto;    
 }
 
-/* put the logo and temperature value in the middle of their container */
-.logo, .temperature{
-    flex:1;
-}
-
 .left{
     text-align: right;
 }

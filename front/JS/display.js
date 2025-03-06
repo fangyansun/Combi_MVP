@@ -3,22 +3,22 @@
 let display_namespace = {
 
     speed : null,
-    temperature_1 : null,
-    temperature_2 : null,
-    temperature_3 : null,
-    temperature_4 : null,
+    temperature_car : null,
+    temperature_motor : null,
+    temperature_water : null,
+    temperature_ext : null,
 
     init(){
         console.log("hello from display_namespace")
 
         this.speed         = document.getElementById("speed")
-        this.temperature_1 = document.getElementById("temperature_1")
-        this.temperature_2 = document.getElementById("temperature_2")
-        this.temperature_3 = document.getElementById("temperature_3")
-        this.temperature_4 = document.getElementById("temperature_4")
+        this.temperature_car = document.getElementById("temperature_car")
+        this.temperature_motor = document.getElementById("temperature_motor")
+        this.temperature_water = document.getElementById("temperature_water")
+        this.temperature_ext = document.getElementById("temperature_ext")
 
         // check if they exist
-        const display_list = [this.speed, this.temperature_1, this.temperature_2, this.temperature_3, this.temperature_4]
+        const display_list = [this.speed, this.temperature_car, this.temperature_motor, this.temperature_water, this.temperature_ext]
         let counter = 0
         display_list.forEach(element => {
             if (element == null){
@@ -33,20 +33,20 @@ let display_namespace = {
         this.speed.innerHTML = speed
     },
 
-    set_Temperature_1(temperature){
-        this.temperature_1.innerHTML = temperature
+    set_Temperature_car(temperature){
+        this.temperature_car.innerHTML = temperature
     },
 
-    set_Temperature_2(temperature){
-        this.temperature_2.innerHTML = temperature
+    set_Temperature_motor(temperature){
+        this.temperature_motor.innerHTML = temperature
     },
 
-    set_Temperature_3(temperature){
-        this.temperature_3.innerHTML = temperature
+    set_Temperature_water(temperature){
+        this.temperature_water.innerHTML = temperature
     },
 
-    set_Temperature_4(temperature){
-        this.temperature_4.innerHTML = temperature
+    set_Temperature_ext(temperature){
+        this.temperature_ext.innerHTML = temperature
     },
 
 }
