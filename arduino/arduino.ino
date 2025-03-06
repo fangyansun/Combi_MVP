@@ -16,25 +16,24 @@ void loop() {
     Serial.println(data);
 
     Serial.print("Temp_ext=");
-    Serial.println(data++);
+    Serial.println(11);
 
     Serial.print("Temp_water=");
-    Serial.println(data++);    
+    Serial.println(22);    
 
     Serial.print("Temp_motor=");
-    Serial.println(data++);
+    Serial.println(33);
 
     Serial.print("Speed=");
-    Serial.println(data++);
+    Serial.println(44);
 
     Serial.print("GPS1=");
-    Serial.println(data++);
+    Serial.println(55);
 
     Serial.print("GPS2=");
-    Serial.println(data);
+    Serial.println(66);
 
-    delay(500); // Attendre 1/2 secondes
+    delay(600); // Attendre 600 ms
     digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-    delay(500); // Attendre 1/2 secondes    
+    delay(600); // Attendre 600 ms
 }
-

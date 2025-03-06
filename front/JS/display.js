@@ -19,7 +19,7 @@ let display_namespace = {
 
         // check if they exist
         const display_list = [this.speed, this.temperature_car, this.temperature_motor, this.temperature_water, this.temperature_ext]
-        let counter = 0
+        let counter = 1
         display_list.forEach(element => {
             if (element == null){
                 console.log(`Warning, the ${counter} html element of display_list is null`)

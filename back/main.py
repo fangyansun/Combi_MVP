@@ -86,6 +86,8 @@ async def websocket_Handler(websocket):
                 print("we received empty data")
         except Exception as error:
             print("Erreur lors de la lecture des données venant d'Arduino avec arduino_com.readline", error)
+            # in this condition, we break the while to stop this function and try a new websocket connexion
+            break            
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
