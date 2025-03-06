@@ -20,3 +20,11 @@ h1,h2{
 .logo, .temperature{
     flex:1;
 }
+
+.left{
+    text-align: right;
+}
+
+.right{
+    text-align: left;
+}
