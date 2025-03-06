@@ -4,32 +4,31 @@ body{
 }
 
 h1{
-    font-size: 7em;
+    font-size: 3.5em;
 }
 
 h2{
-    font-size: 4em;
+    font-size: 2em;
 }
 
 .dasbhoard_indicator{
-    flex:1;
+    flex:1;    
 }
 
-.temperature{
-    /* margin: 2em; */
-    font-size: 4em;
+.temperature{    
+    font-size: 2em;
 }
 
 .dasbhoard_indicator{
-    padding-top: 1em;
-    padding-bottom: 1em;
-    padding-left: 4em;
-    padding-right: 4em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 2em;
+    padding-right: 2em;
     border: solid black 0.1em;
-    border-radius: 1em;
-    width:20em;
+    border-radius: 0.5em;
+    width:10em;
 }
 
 .logo{
-    width: 5em;
+    width: 1em;
 }
