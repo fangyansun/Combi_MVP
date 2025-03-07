@@ -91,7 +91,7 @@ async def websocket_Handler(websocket):
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
-    async with serve(websocket_Handler, "localhost", 8765):
+    async with serve(websocket_Handler, "192.168.31.232", 8765):
         print("start websocket server, nous attendons la connexion du front")
         await asyncio.get_running_loop().create_future()
 
