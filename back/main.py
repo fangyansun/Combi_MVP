@@ -23,6 +23,7 @@ import time
 USB_PORT = "COM6"
 BAUDRATE = 9600
 ARDUINO_CONNEXION_TIMEOUT = 5
+WEBSOCKET_RETRY_PERIOD = 5
 DATA_RECORDING_PERIOD = 20 # in seconds
 LOG_PATH = "log/log.csv" # in a future version, we might have a different log name for each period of time
 
@@ -34,20 +35,15 @@ def debug_Print(message):
     print("-- ",message)
 
 async def websocket_Handler(websocket):
-    debug_Print("new websocket_Handler")
-    # stop the last websocket handler if any
-    # try:
-    #     debug_Print("essayons d'arrêter la dernière connexion websocket le cas échéant")
-    #     global arduino_serial_communication_chanel
-    #     arduino_serial_communication_chanel.close()
-    # except Exception as error:
-    #     debug_Print(error)
-    # finally:
-    #     debug_Print("Maintenant, nous créons une nouvelle connexion avec Arduino avec la certitude que c'est la seule")
-    #     arduino_serial_communication_chanel = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
-    #     # we use global variables because this function could be reset by the client (F5)
-    #     global last_time
-    #     try:
+    debug_Print(f'*********** New websocket_Handler *************')
+    try:
+        debug_Print("do something")
+    except Exception:
+        debug_Print(Exception)
+    finally:    
+        debug_Print(f'Fin du websocket handler actuel programmée dans {WEBSOCKET_RETRY_PERIOD} secondes')
+        await asyncio.sleep(WEBSOCKET_RETRY_PERIOD)
+    
     #         while True:
     #             data=arduino_serial_communication_chanel.readline().decode('utf-8').strip()
     #             if data:
@@ -84,7 +80,7 @@ async def websocket_Handler(websocket):
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
     async with serve(websocket_Handler, "192.168.137.1", 8765):
-        print("start websocket server, nous attendons la connexion du front")
+        debug_Print("Start websocket asyncio loop")
         await asyncio.get_running_loop().create_future()
 
 def record_Current_Data_Into_Local_Log_File():
