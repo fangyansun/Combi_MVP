@@ -1,2 +1,2 @@
-websocket_namespace.init()
+init_Websocket()
 display_namespace.init()

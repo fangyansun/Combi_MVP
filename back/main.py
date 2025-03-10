@@ -28,44 +28,55 @@ LOG_PATH = "log/log.csv" # in a future version, we might have a different log na
 
 global_data_dict = {}
 last_time = 0
+arduino_serial_communication_chanel = 0
 
 async def websocket_Handler(websocket):
     print("new websocket_Handler")
-    arduino_serial_communication_chanel = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
-    # we use global variables because this function could be reset by the client (F5)
-    global last_time
+    # stop the last websocket handler if any
     try:
-        while True:
-            data=arduino_serial_communication_chanel.readline().decode('utf-8').strip()
-            if data:
-                # step 1 : record the data in a global_data_dict
-                key, value = data.split("=")
-                try:
-                    global_data_dict[key] = value
-                    # step 2 : send the data to the frond end through websocket
-                    try:
-                        await websocket.send(data)
-                        await asyncio.sleep(0.1) # the program does not work without this line
-
-                        # step 3 : if we waited long enough, we make one record on the local database
-                        current_time = time.perf_counter()
-                        if (current_time - last_time > DATA_RECORDING_PERIOD):
-                            record_Current_Data_Into_Local_Log_File()
-                            last_time = current_time
-
-                    except Exception as error:
-                        print(f'websocket.send error : {error}')
-                        print("we will break the websocket handler")
-                        break
-                except Exception as error:
-                    print(f'global_data_dict[key] = value error with this key : {key} and that error : {error}')
-            else:
-                print("we received empty data")
-        # end of while True
+        print("essayons d'arrêter la dernière connexion websocket le cas échéant")
+        global arduino_serial_communication_chanel
+        arduino_serial_communication_chanel.close()
     except Exception as error:
-        print("Erreur lors de la lecture des données venant d'Arduino avec arduino_com.readline", error)
-        print("we will break the websocket handler")
-    finally: arduino_serial_communication_chanel.close()
+        print(error)
+    finally:
+        print("Maintenant, nous créons une nouvelle connexion avec Arduino avec la certitude que c'est la seule")
+        arduino_serial_communication_chanel = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
+        # we use global variables because this function could be reset by the client (F5)
+        global last_time
+        try:
+            while True:
+                data=arduino_serial_communication_chanel.readline().decode('utf-8').strip()
+                if data:
+                    # step 1 : record the data in a global_data_dict
+                    key, value = data.split("=")
+                    try:
+                        global_data_dict[key] = value
+                        # step 2 : send the data to the frond end through websocket
+                        try:
+                            await websocket.send(data)
+                            await asyncio.sleep(0.1) # the program does not work without this line
+
+                            # step 3 : if we waited long enough, we make one record on the local database
+                            current_time = time.perf_counter()
+                            if (current_time - last_time > DATA_RECORDING_PERIOD):
+                                record_Current_Data_Into_Local_Log_File()
+                                last_time = current_time
+
+                        except Exception as error:
+                            print(f'websocket.send error : {error}')
+                            print("we will break the websocket handler")
+                            break
+                    except Exception as error:
+                        print(f'global_data_dict[key] = value error with this key : {key} and that error : {error}')
+                else:
+                    print("we received empty data")
+            # end of while True
+        except Exception as error:
+            print("Erreur lors de la lecture des données venant d'Arduino avec arduino_com.readline", error)
+        finally: 
+            print("Fin de la fonction websocket handler, nous fermons la communication avec Arduino")
+            arduino_serial_communication_chanel.close()
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
