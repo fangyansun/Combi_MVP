@@ -29,26 +29,39 @@ LOG_PATH = "log/log.csv" # in a future version, we might have a different log na
 
 global_data_dict = {}
 last_time = 0
-arduino_serial_communication_chanel = 0
+arduino_serial_communication_chanel = None
 
 def debug_Print(message):
     print("-- ",message)
 
+async def stop_With_Delay():
+    debug_Print(f'Fin du websocket handler actuel programmée dans {WEBSOCKET_RETRY_PERIOD} secondes')
+    await asyncio.sleep(WEBSOCKET_RETRY_PERIOD)
+
 async def websocket_Handler(websocket):
     debug_Print(f'*********** New websocket_Handler *************')
     try:
-        # start arduino serial communication
-        debug_Print("Start arduino communication")
-        try:
-            serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
-            debug_Print("Arduino Communication started !")
-        except Exception as error:
-            debug_Print(f'Arduino Communication failed : {error}')
+        debug_Print("Voyons si la connexion à Arduino est présente")
+        global arduino_serial_communication_chanel
+        if not arduino_serial_communication_chanel:
+            debug_Print("Aucune connexion avec Arduino n'a été détectée, donc nous en créant une nouvelle")
+            try:
+                arduino_serial_communication_chanel = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
+                debug_Print("Arduino Communication started !") 
+            except Exception as error:
+                arduino_serial_communication_chanel = None
+                debug_Print(f'Arduino Communication failed : {error}')
+                await stop_With_Delay()
+                return 0
+        else:
+            debug_Print(f'Une connexion à Arduino a été détectée : {arduino_serial_communication_chanel}')
     except Exception as error:
-        debug_Print(error)
-    finally:    
-        debug_Print(f'Fin du websocket handler actuel programmée dans {WEBSOCKET_RETRY_PERIOD} secondes')
-        await asyncio.sleep(WEBSOCKET_RETRY_PERIOD)
+        debug_Print(f'Erreur non prévue : {error}')
+    finally:
+        await stop_With_Delay()        
+        
+
+        # debug_Print("Start Transferring Arduino messages")            
     
     #         while True:
     #             data=arduino_serial_communication_chanel.readline().decode('utf-8').strip()
