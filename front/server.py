@@ -2,7 +2,7 @@ import http.server
 import socketserver
 
 PORT = 8000
-IP = "192.168.31.232"
+IP = "192.168.137.1"
 
 Handler = http.server.SimpleHTTPRequestHandler
 
