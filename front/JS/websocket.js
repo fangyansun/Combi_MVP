@@ -8,10 +8,16 @@ websocket_namespace = {
         console.log("websocket init program")
 
         //const socket = new WebSocket("ws://192.168.3.2:8765");
-        const socket = new WebSocket("ws://192.168.137.1:8765");
+        
+        let socket = new WebSocket("ws://192.168.137.1:8765");
 
-        socket.onopen = ()=>console.log("websocket connexion open")
-        socket.onclose = ()=>console.log("websocket connexion close")
+        socket.onopen = ()=>{
+            console.log("websocket connexion open")            
+        }
+        socket.onclose = ()=>{
+            console.log("websocket connexion close, we will relaunch the websocket init program")
+            this.init()
+        }
 
         // Listen for messages
         socket.addEventListener("message", function (event) {
