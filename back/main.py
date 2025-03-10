@@ -17,7 +17,6 @@ Tutorial :
 import asyncio
 from websockets.asyncio.server import serve
 import serial
-import time
 
 # Global variables and constants
 USB_PORT = "COM6"
@@ -47,7 +46,7 @@ async def websocket_Handler(websocket):
             debug_Print("Aucune connexion avec Arduino n'a été détectée, donc nous en créant une nouvelle")
             try:
                 arduino_serial_communication_chanel = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
-                debug_Print("Arduino Communication started !") 
+                debug_Print("Nouvelle connexion à Arduino réussie !") 
             except Exception as error:
                 arduino_serial_communication_chanel = None
                 debug_Print(f'Arduino Communication failed : {error}')
@@ -55,8 +54,25 @@ async def websocket_Handler(websocket):
                 return 0
         else:
             debug_Print(f'Une connexion à Arduino a été détectée : {arduino_serial_communication_chanel}')
+        debug_Print("On commence à écouter le port série et à retransmettre les données ")
+        while True:
+            data=arduino_serial_communication_chanel.readline().decode('utf-8').strip()
+            debug_Print(f'Donnée reçue : {data}')
+            # step 1 : record the data in a global_data_dict
+            key, value = data.split("=")
+            try:
+                global_data_dict[key] = value
+                # step 2 : send the data to the frond end through websocket
+                await websocket.send(data)
+                await asyncio.sleep(0.1) # the program does not work without this line
+            except Exception as error:
+                debug_Print(f'global_data_dict[key] = value error with this key : {key} and that error : {error}')
+
+
+        
     except Exception as error:
         debug_Print(f'Erreur non prévue : {error}')
+        arduino_serial_communication_chanel = None
     finally:
         await stop_With_Delay()        
         
