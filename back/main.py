@@ -37,9 +37,15 @@ def debug_Print(message):
 async def websocket_Handler(websocket):
     debug_Print(f'*********** New websocket_Handler *************')
     try:
-        debug_Print("do something")
-    except Exception:
-        debug_Print(Exception)
+        # start arduino serial communication
+        debug_Print("Start arduino communication")
+        try:
+            serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
+            debug_Print("Arduino Communication started !")
+        except Exception as error:
+            debug_Print(f'Arduino Communication failed : {error}')
+    except Exception as error:
+        debug_Print(error)
     finally:    
         debug_Print(f'Fin du websocket handler actuel programmée dans {WEBSOCKET_RETRY_PERIOD} secondes')
         await asyncio.sleep(WEBSOCKET_RETRY_PERIOD)
