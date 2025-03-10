@@ -1,5 +1,7 @@
 "use script"
 
+// http://192.168.137.1:8000/tableau_de_bord.html
+
 // https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket
 function init_Websocket(){
     console.log("websocket init program")
@@ -13,10 +15,10 @@ function init_Websocket(){
             console.log("websocket connexion close, we will relaunch the websocket init program in 6 seconds")
             setTimeout(init_Websocket, 6000)
         }
-
+        
         // Listen for messages
         socket.addEventListener("message", function (event) {
-            // console.log("Message from server ", event.data);
+            console.log("Message from server ", event.data);
             try {
                 const key_value = event.data.split("=")
                 const key = key_value[0]
