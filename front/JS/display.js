@@ -9,8 +9,7 @@ let display_namespace = {
     temperature_ext : null,
 
     init(){
-        console.log("hello from display_namespace")
-
+        
         this.speed         = document.getElementById("speed")
         this.temperature_car = document.getElementById("temperature_car")
         this.temperature_motor = document.getElementById("temperature_motor")

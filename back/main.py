@@ -23,38 +23,20 @@ import time
 USB_PORT = "COM6"
 BAUDRATE = 9600
 ARDUINO_CONNEXION_TIMEOUT = 5
-RETRY_DELAY = 20
-DATA_RECORDING_PERIOD = 100 # in seconds
+DATA_RECORDING_PERIOD = 20 # in seconds
 LOG_PATH = "log/log.csv" # in a future version, we might have a different log name for each period of time
 
 global_data_dict = {}
 last_time = 0
 
-def serial_Communication_Init():
-    retry = True
-    while retry:
-        try:
-            print("Initialisation en cours, nous attendons la connexion avec Arduino")
-            arduino_com = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
-            print("connexion établie avec Arduino !")
-            retry = False
-                
-        except Exception as error:
-            print("Erreur lors de l'initialisation de la communication avec Arduino : ", error)
-            print(f'Nous allons réessayer dans : {RETRY_DELAY} s')
-            time.sleep(RETRY_DELAY)
-    
-    return arduino_com
-
-
 async def websocket_Handler(websocket):
     print("new websocket_Handler")
-    arduino_com = serial_Communication_Init()
+    arduino_serial_communication_chanel = serial.Serial(USB_PORT,BAUDRATE,timeout=ARDUINO_CONNEXION_TIMEOUT)
     # we use global variables because this function could be reset by the client (F5)
     global last_time
     try:
         while True:
-            data=arduino_com.readline().decode('utf-8').strip()
+            data=arduino_serial_communication_chanel.readline().decode('utf-8').strip()
             if data:
                 # step 1 : record the data in a global_data_dict
                 key, value = data.split("=")
@@ -83,7 +65,7 @@ async def websocket_Handler(websocket):
     except Exception as error:
         print("Erreur lors de la lecture des données venant d'Arduino avec arduino_com.readline", error)
         print("we will break the websocket handler")
-    finally: arduino_com.close()
+    finally: arduino_serial_communication_chanel.close()
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
