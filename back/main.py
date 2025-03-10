@@ -62,19 +62,20 @@ async def websocket_Handler(websocket):
             key, value = data.split("=")
             try:
                 global_data_dict[key] = value
-                # step 2 : send the data to the frond end through websocket
-                await websocket.send(data)
-                await asyncio.sleep(0.1) # the program does not work without this line
             except Exception as error:
                 debug_Print(f'global_data_dict[key] = value error with this key : {key} and that error : {error}')
-
-
+                await stop_With_Delay()
+                return
+            
+            # step 2 : send the data to the frond end through websocket
+            await websocket.send(data)
+            await asyncio.sleep(0.1) # the program does not work without this line
         
     except Exception as error:
         debug_Print(f'Erreur non prévue : {error}')
         arduino_serial_communication_chanel = None
     finally:
-        await stop_With_Delay()        
+        await stop_With_Delay()
         
 
         # debug_Print("Start Transferring Arduino messages")            
