@@ -20,7 +20,8 @@ import serial
 import time
 
 # Global variables and constants
-USB_PORT = "COM6"
+USB_PORT = "/dev/ttyACM0"
+# USB_PORT = "COM6"
 BAUDRATE = 9600
 ARDUINO_CONNEXION_TIMEOUT = 5
 WEBSOCKET_RETRY_PERIOD = 5
@@ -90,7 +91,7 @@ async def websocket_Handler(websocket):
 
 async def start_Websocket():
     # https://websockets.readthedocs.io/en/stable/intro/tutorial1.html#download-the-starter-kit
-    async with serve(websocket_Handler, "192.168.137.1", 8765):
+    async with serve(websocket_Handler, "192.168.31.18", 8765):
         debug_Print("Start websocket asyncio loop")
         await asyncio.get_running_loop().create_future()
 
@@ -110,7 +111,3 @@ def record_Current_Data_Into_Local_Log_File():
 if __name__ == "__main__":
     debug_Print("Début du programme")
     asyncio.run(start_Websocket())
-    
-
-
-    

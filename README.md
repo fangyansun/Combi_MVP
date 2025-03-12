@@ -78,8 +78,14 @@ Then, we can install the log sending script so that it is executed each 20 minut
 crontab -e
 */20 * * * * /path_to_script/send_log.sh
 
-# Create a launcher button
-- Right click on the desktop
-- Select "create a launcher"
-- Choose the option "Run on a Terminal"
-- Select 'launch_back_and_front.sh'
+# Créer un lanceur
+Le lanceur systemd va démarrer et redémarrer le script launch_backend.sh dès que nécessaire
+
+```sh
+cd /etc/systemd/system
+sudo vim combi.service
+
+sudo systemctl enable ./combi.service
+sudo systemctl start combi.service
+sudo systemctl status combi.service
+```

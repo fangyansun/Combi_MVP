@@ -7,18 +7,19 @@ function init_Websocket(){
     console.log("websocket init program")
 
     try {
-        socket = new WebSocket("ws://192.168.137.1:8765");
+        socket = new WebSocket("ws://192.168.31.18:8765");
         socket.onopen = () => {
             console.log("websocket connexion open")
         }
         socket.onclose = () => {
             console.log("websocket connexion close, we will relaunch the websocket init program in 6 seconds")
+            display_namespace.set_Speed("Backend Non Connecté !")
             setTimeout(init_Websocket, 6000)
         }
         
         // Listen for messages
         socket.addEventListener("message", function (event) {
-            console.log("Message from server ", event.data);
+            //console.log("Message from server ", event.data);
             try {
                 const key_value = event.data.split("=")
                 const key = key_value[0]
@@ -37,7 +38,7 @@ function init_Websocket(){
                         display_namespace.set_Temperature_ext(parseFloat(value).toFixed(1))
                         break
                     case 'Speed':
-                        display_namespace.set_Speed(parseFloat(value).toFixed(1))
+                        display_namespace.set_Speed(parseFloat(value).toFixed(1) + " km/h")
                         break
                     case 'GPS1':
                         // TODO
