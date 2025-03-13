@@ -3,9 +3,8 @@ Description=Launch backend server for combi dashbord (with Arduino connexion)
 
 [Service]
 ExecStart=/home/combi/Desktop/Combi_MVP/scripts/launch_backend.sh
-ExecStop=/bin/kill -SIGINT $MAINPID
 Restart=on-failure
-RestartSec=10s
+RestartSec=15s
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=combi
